@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Desafio de Digitação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-mono {
+            font-family: 'Roboto Mono', monospace;
+        }
+        .hidden {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .animate-fade-in-scale {
+            animation: fadeInScale 0.5s ease-in-out;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center justify-center p-4 selection:bg-cyan-500 selection:text-white">
+
+    <header class="flex flex-col items-center justify-center text-center mb-8">
+        <div class="flex items-center gap-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-10 h-10 md:w-12 md:h-12 text-cyan-400">
+                <rect width="20" height="16" x="2" y="4" rx="2" ry="2"></rect>
+                <path d="M6 8h.01"></path><path d="M10 8h.01"></path><path d="M14 8h.01"></path><path d="M18 8h.01"></path>
+                <path d="M6 12h.01"></path><path d="M10 12h.01"></path><path d="M14 12h.01"></path><path d="M18 12h.01"></path>
+                <path d="M8 16h8"></path>
+            </svg>
+            <h1 class="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+                Desafio de Digitação
+            </h1>
+        </div>
+        <p class="text-gray-400 mt-2 max-w-xl">
+            Teste sua velocidade e precisão digitando palavras com acentos e caracteres especiais.
+        </p>
+    </header>
+
+    <main class="w-full max-w-3xl">
+        <!-- Configuration Screen -->
+        <div id="config-screen" class="bg-gray-800 p-8 rounded-lg shadow-2xl border border-gray-700 flex flex-col items-center gap-6 animate-fade-in">
+            <h2 class="text-2xl font-bold text-white">Configure seu Desafio</h2>
+            <div class="w-full max-w-sm">
+                <label for="duration-range" class="block mb-2 text-sm font-medium text-gray-300 text-center">
+                    Duração: <span id="duration-display" class="text-cyan-400 font-bold text-lg">1 minuto</span>
+                </label>
+                <input id="duration-range" type="range" min="0.5" max="10" step="0.5" value="1" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-500">
+                <div class="flex justify-between text-xs text-gray-400 mt-1 px-1">
+                    <span>30 seg</span>
+                    <span>10 min</span>
+                </div>
+            </div>
+            <button id="start-button" class="w-full max-w-sm bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-300/50 shadow-lg">
+                Começar a Digitar
+            </button>
+        </div>
+
+        <!-- Typing Test Screen -->
+        <div id="typing-screen" class="hidden bg-gray-800 p-6 md:p-8 rounded-lg shadow-2xl border border-gray-700 w-full flex flex-col gap-6 animate-fade-in">
+            <div class="flex justify-end items-center bg-gray-900/50 p-4 rounded-lg">
+                <div class="flex items-center gap-2 text-2xl font-bold text-cyan-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span id="timer-display">1:00</span>
+                </div>
+            </div>
+            <div id="word-area" class="p-4 bg-gray-900/50 rounded-lg flex flex-col items-center justify-center min-h-[12rem] text-center cursor-text">
+                <div id="current-word-display" class="text-4xl md:text-5xl font-mono font-bold tracking-widest text-white mb-6 h-12 flex items-center justify-center"></div>
+                <div id="next-words-display" class="flex gap-x-6 gap-y-2 justify-center text-2xl font-mono text-gray-500 flex-wrap px-4"></div>
+            </div>
+            <input id="typing-input" type="text" class="w-full p-4 text-xl font-mono bg-gray-700 border-2 border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 text-white" placeholder="Digite e pressione Enter..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden bg-gray-800 p-8 rounded-lg shadow-2xl border border-gray-700 flex flex-col items-center gap-6 animate-fade-in-scale">
+            <div class="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-yellow-400">
+                    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                    <path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                    <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                    <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                </svg>
+                <h2 class="text-3xl font-bold text-white">Resultados</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-4 w-full text-center">
+                <div class="bg-gray-900/50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-400">Precisão</p>
+                    <p id="accuracy-display" class="text-4xl font-bold text-cyan-400">0%</p>
+                </div>
+                <div class="bg-gray-900/50 p-4 rounded-lg">
+                    <p class="text-sm text-gray-400">Palavras Corretas</p>
+                    <p id="correct-words-display" class="text-4xl font-bold text-green-400">0</p>
+                </div>
+            </div>
+            <div class="w-full text-center bg-gray-900/50 p-4 rounded-lg">
+                <p class="text-red-400">
+                    <span id="incorrect-words-display" class="font-bold">0</span> palavras incorretas
+                </p>
+            </div>
+            <button id="restart-button" class="w-full max-w-sm bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-cyan-300/50 shadow-lg mt-4">
+                Tentar Novamente
+            </button>
+        </div>
+    </main>
+
+    <footer class="text-center mt-12 text-gray-500 text-sm">
+        <p>Criado com HTML, CSS e JavaScript.</p>
+    </footer>
+
+    <script src="./index.js" type="module"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

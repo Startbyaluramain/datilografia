@@ -1,0 +1,5 @@
+{
+  "name": "Teste Datilografia",
+  "description": "A simple web application to help users practice typing, focusing on special characters, uppercase letters, and accents in Portuguese. Users can set a timer and try to type as many words correctly as possible. Built with HTML, CSS, and JavaScript.",
+  "requestFramePermissions": []
+}
